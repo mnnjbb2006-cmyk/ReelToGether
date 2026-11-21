@@ -1,7 +1,6 @@
 (async () => {
   const roomId = window.REEL_ROOM_ID;
-  const query = new URLSearchParams(window.location.search);
-  const myName = (query.get('name') || 'Guest').trim().slice(0, 24) || 'Guest';
+  const myUserId = Number(window.REEL_USER_ID || 0);
 
   const $ = (id) => document.getElementById(id);
   const movie = $('movie');
@@ -25,7 +24,7 @@
     const configResponse = await fetch('/api/rtc-config');
     if (configResponse.ok) rtcConfig = await configResponse.json();
   } catch (error) { console.warn('Using fallback ICE configuration:', error); }
-  socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws/${roomId}?name=${encodeURIComponent(myName)}`);
+  socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws/${roomId}`);
 
   function send(payload) {
     if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify(payload));
@@ -135,7 +134,7 @@
     if (empty) empty.remove();
 
     const item = document.createElement('div');
-    item.className = `chat-message${message.peer_id === myPeerId ? ' mine' : ''}`;
+    item.className = `chat-message${(message.user_id && Number(message.user_id) === myUserId) || (message.peer_id && message.peer_id === myPeerId) ? ' mine' : ''}`;
     const meta = document.createElement('div');
     meta.className = 'chat-meta';
     const sender = document.createElement('strong');
@@ -373,6 +372,7 @@
         });
         setConnection(true, 'CONNECTED');
         updateHostUI();
+        (message.chat_history || []).forEach(addChatMessage);
         applyPlayback(message.playback);
         break;
       case 'participant_joined':

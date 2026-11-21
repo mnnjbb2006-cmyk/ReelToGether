@@ -15,6 +15,7 @@
     <a class="brand" href="/"><span class="brand-mark">▶</span><span>reel<span class="brand-light">together</span></span></a>
     <div class="topbar-center"><span class="live-dot"></span><span>WATCH PARTY</span><span class="topbar-divider">/</span><span class="room-code-label">ROOM {{ room_id }}</span></div>
     <div class="topbar-actions">
+      <span class="room-user-label">{{ username }}</span>
       <button id="copy-invite" class="topbar-button"><span>↗</span> Invite friends</button>
       <a class="leave-link" href="/">Leave room</a>
     </div>
@@ -87,7 +88,7 @@
 
   <div id="toast" class="toast" role="status"></div>
   <audio id="remote-audio" autoplay></audio>
-  <script>window.REEL_ROOM_ID = {{ room_id | tojson }};</script>
+  <script>window.REEL_ROOM_ID = {{ room_id | tojson }}; window.REEL_USER_NAME = {{ username | tojson }}; window.REEL_USER_ID = {{ user_id | tojson }};</script>
   <script src="/static/room.js" defer></script>
 </body>
 </html>

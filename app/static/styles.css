@@ -227,3 +227,26 @@ kbd { padding: 2px 5px; border: 1px solid #ffffff1b; border-radius: 4px; color: 
   .side-column { display: flex; }
   .chat-panel { height: 350px; min-height: 350px; }
 }
+
+/* Account and persistent-room additions */
+.nav-account { display: flex; align-items: center; gap: 18px; }
+.nav-account .nav-note strong { color: #eeeaff; font-weight: 700; }
+.auth-main { width: min(100% - 32px, 470px); margin: 58px auto 80px; position: relative; z-index: 1; }
+.auth-card { max-width: none; width: 100%; }
+.auth-card h2 { margin-bottom: 8px; }
+.auth-form { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+.auth-form .field-label { margin-top: 5px; }
+.auth-form .text-field { width: 100%; }
+.remember-row { display: flex; align-items: center; gap: 9px; color: #aeb5c5; font-size: 11px; cursor: pointer; margin: 8px 0 5px; }
+.remember-row input { accent-color: #a48bff; width: 15px; height: 15px; }
+.auth-switch { color: #8790a3; text-align: center; margin: 22px 0 0; font-size: 11px; }
+.auth-switch a { color: #bdadff; font-weight: 700; text-decoration: none; }
+.auth-switch a:hover { color: #fff; }
+.auth-page .nav { position: relative; z-index: 1; }
+.room-user-label { color: #aeb5c5; font-size: 10px; font-weight: 600; }
+@media (max-width: 560px) {
+  .nav-account { gap: 8px; }
+  .nav-account .nav-note { display: none; }
+  .auth-main { margin-top: 30px; }
+  .room-user-label { display: none; }
+}
