@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0d14">
+  <title>Movie room {{ room_id }} — ReelTogether</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="room-body" data-room-id="{{ room_id }}">
+  <header class="room-topbar">
+    <a class="brand" href="/"><span class="brand-mark">▶</span><span>reel<span class="brand-light">together</span></span></a>
+    <div class="topbar-center"><span class="live-dot"></span><span>WATCH PARTY</span><span class="topbar-divider">/</span><span class="room-code-label">ROOM {{ room_id }}</span></div>
+    <div class="topbar-actions">
+      <button id="copy-invite" class="topbar-button"><span>↗</span> Invite friends</button>
+      <a class="leave-link" href="/">Leave room</a>
+    </div>
+  </header>
+
+  <main class="room-layout">
+    <section class="watch-column">
+      <div class="watch-heading">
+        <div><div class="eyebrow small-eyebrow"><span class="eyebrow-line"></span> THE WATCH ROOM</div><h1>You're watching <span>together.</span></h1></div>
+        <div class="watch-status"><span class="status-pulse"></span><span id="connection-label">CONNECTING</span></div>
+      </div>
+
+      <div class="player-shell">
+        <div class="player-topline"><div class="player-live"><span class="live-dot"></span> LIVE ROOM</div><div class="player-room">ROOM {{ room_id }}</div></div>
+        <div class="video-wrap" id="video-wrap">
+          <video id="movie" playsinline preload="metadata"></video>
+          <div class="video-empty" id="video-empty">
+            <div class="empty-icon">▶</div>
+            <h2>No movie queued yet</h2>
+            <p>The host can add a direct video link below.<br>Everyone will watch from the same moment.</p>
+          </div>
+          <button class="tap-to-play hidden" id="tap-to-play">Tap to sync playback <span>▶</span></button>
+          <div class="reaction-float" id="reaction-float" aria-live="polite"></div>
+        </div>
+        <div class="player-footer">
+          <div class="player-caption"><span class="caption-equalizer">▥</span><div><strong id="now-playing">Waiting for a movie</strong><small id="playback-hint">Your room is ready when you are.</small></div></div>
+          <div class="host-indicator" id="host-indicator">★ HOST CONTROLS</div>
+        </div>
+      </div>
+
+      <section class="source-panel" id="source-panel">
+        <div class="source-heading"><div><span class="section-overline">MOVIE SOURCE</span><h3>Queue up the movie</h3></div><span class="host-only-tag" id="host-only-tag">HOST ONLY</span></div>
+        <form id="source-form" class="source-form">
+          <input id="video-url" type="url" class="text-field" placeholder="Paste a direct MP4 / WebM video URL…" autocomplete="url">
+          <button class="primary-btn" type="submit">Load movie <span>→</span></button>
+        </form>
+        <p class="source-help" id="source-help">Use a direct video file URL that your friends are allowed to access. YouTube, Netflix and other DRM-protected pages are not direct video URLs.</p>
+      </section>
+
+      <section class="quick-reactions">
+        <span class="reaction-label">SEND A REACTION</span>
+        <div class="reaction-buttons">
+          <button data-emoji="❤️" aria-label="Heart">❤️</button><button data-emoji="😂" aria-label="Laugh">😂</button><button data-emoji="👏" aria-label="Clap">👏</button><button data-emoji="🎉" aria-label="Celebrate">🎉</button><button data-emoji="😮" aria-label="Surprised">😮</button><button data-emoji="🔥" aria-label="Fire">🔥</button>
+        </div>
+      </section>
+    </section>
+
+    <aside class="side-column">
+      <section class="people-panel panel-card">
+        <div class="panel-heading"><div><span class="section-overline">THE CREW</span><h2>In this room <span id="people-count">1</span></h2></div><div class="people-live"><span class="live-dot"></span> LIVE</div></div>
+        <div id="people-list" class="people-list"><div class="people-loading">Finding your friends…</div></div>
+        <div class="voice-control">
+          <div class="voice-copy"><span class="voice-icon">♬</span><div><strong>Room voice chat</strong><small id="voice-status">Your mic is off</small></div></div>
+          <button id="mic-toggle" class="mic-button" aria-pressed="false"><span class="mic-symbol">♩</span><span id="mic-label">Turn mic on</span></button>
+          <p class="voice-footnote">Your browser will ask for microphone access the first time.</p>
+        </div>
+      </section>
+
+      <section class="chat-panel panel-card">
+        <div class="panel-heading chat-heading"><div><span class="section-overline">THE GROUP CHAT</span><h2>Say something.</h2></div><span class="chat-spark">✦</span></div>
+        <div id="chat-messages" class="chat-messages" aria-live="polite"><div class="chat-empty"><span>✉</span><strong>The chat is all yours.</strong><small>Drop a message while you watch.</small></div></div>
+        <form id="chat-form" class="chat-form">
+          <input id="chat-input" type="text" maxlength="1000" placeholder="Message the room…" autocomplete="off">
+          <button type="submit" aria-label="Send message">➤</button>
+        </form>
+      </section>
+      <div class="keyboard-hint"><span>TIP</span> Press <kbd>M</kbd> to toggle your mic. <kbd>Space</kbd> toggles playback for the host.</div>
+    </aside>
+  </main>
+
+  <div id="toast" class="toast" role="status"></div>
+  <audio id="remote-audio" autoplay></audio>
+  <script>window.REEL_ROOM_ID = {{ room_id | tojson }};</script>
+  <script src="/static/room.js" defer></script>
+</body>
+</html>

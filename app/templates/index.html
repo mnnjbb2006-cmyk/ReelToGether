@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0d14">
+  <title>ReelTogether — movie night, together</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="landing-body">
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <nav class="nav wrap">
+    <a class="brand" href="/"><span class="brand-mark">▶</span><span>reel<span class="brand-light">together</span></span></a>
+    <div class="nav-note"><span class="live-dot"></span> your friends. one screen.</div>
+  </nav>
+
+  <main class="landing wrap">
+    <section class="hero-copy">
+      <div class="eyebrow"><span class="eyebrow-line"></span> MOVIE NIGHT, REINVENTED</div>
+      <h1>Same movie.<br><span class="gradient-text">Same moment.</span><br>Different couches.</h1>
+      <p class="hero-sub">Start a room, invite your people, press play. Watch in sync, chat in real time, and talk like you're all on the same sofa.</p>
+      <div class="feature-pills">
+        <span><span class="pill-icon">◉</span> Live voice chat</span>
+        <span><span class="pill-icon">↔</span> Synced playback</span>
+        <span><span class="pill-icon">✦</span> No account needed</span>
+      </div>
+    </section>
+
+    <section class="entry-card">
+      <div class="card-kicker">LET'S GET THE NIGHT STARTED</div>
+      <h2>Make it a movie night.</h2>
+      <p class="muted">Pick a name your friends will recognize.</p>
+      <label class="field-label" for="nickname">YOUR NAME</label>
+      <input id="nickname" class="text-field" type="text" maxlength="24" placeholder="e.g. Alex" autocomplete="nickname">
+      <button id="create-room" class="primary-btn full-btn"><span>＋</span> Create a room <span class="btn-arrow">→</span></button>
+      <div class="splitter"><span></span><em>OR JOIN YOUR FRIENDS</em><span></span></div>
+      <label class="field-label" for="room-code">ROOM CODE</label>
+      <div class="join-row">
+        <input id="room-code" class="text-field code-field" type="text" maxlength="12" placeholder="7 character code" autocomplete="off" spellcheck="false">
+        <button id="join-room" class="secondary-btn">Join room <span>→</span></button>
+      </div>
+      <div id="entry-error" class="form-error" role="alert"></div>
+      <div class="privacy-note"><span>⌁</span> Private by link. Only people you invite can join.</div>
+    </section>
+  </main>
+
+  <footer class="landing-footer wrap"><span>REELTOGETHER</span><span>Made for the group chat that never agrees on a movie.</span></footer>
+  <script>
+    const nickname = document.getElementById('nickname');
+    const roomCode = document.getElementById('room-code');
+    const errorBox = document.getElementById('entry-error');
+    const getName = () => nickname.value.trim().slice(0, 24) || 'Guest';
+    const enterRoom = (code) => {
+      if (!code) { errorBox.textContent = 'Enter a room code to join.'; return; }
+      window.location.href = `/room/${encodeURIComponent(code.toUpperCase())}?name=${encodeURIComponent(getName())}`;
+    };
+    document.getElementById('create-room').addEventListener('click', async () => {
+      errorBox.textContent = '';
+      const button = document.getElementById('create-room');
+      button.disabled = true; button.classList.add('is-loading');
+      try {
+        const response = await fetch('/api/rooms', { method: 'POST' });
+        if (!response.ok) throw new Error('Could not create a room. Please try again.');
+        const result = await response.json();
+        window.location.href = `${result.url}?name=${encodeURIComponent(getName())}`;
+      } catch (error) {
+        errorBox.textContent = error.message || 'Something went wrong.';
+        button.disabled = false; button.classList.remove('is-loading');
+      }
+    });
+    document.getElementById('join-room').addEventListener('click', () => enterRoom(roomCode.value.trim()));
+    roomCode.addEventListener('keydown', (event) => { if (event.key === 'Enter') enterRoom(roomCode.value.trim()); });
+    nickname.addEventListener('keydown', (event) => { if (event.key === 'Enter') document.getElementById('create-room').click(); });
+  </script>
+</body>
+</html>
