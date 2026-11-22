@@ -38,7 +38,9 @@ NORMAL_SESSION_SECONDS = 12 * 60 * 60
 
 # SQLite is the zero-configuration default. The data directory is kept outside
 # the app package so it can be mounted as a persistent Docker volume.
-DEFAULT_DATA_DIR = PROJECT_DIR / "data"
+# On PaaS, mount its persistent volume at /data and set DATA_DIR=/data.
+# Locally, keep the database inside ./data by default.
+DEFAULT_DATA_DIR = Path(os.getenv("DATA_DIR", str(PROJECT_DIR / "data"))).expanduser()
 DEFAULT_DATA_DIR.mkdir(parents=True, exist_ok=True)
 DEFAULT_DATABASE_URL = f"sqlite:///{(DEFAULT_DATA_DIR / 'reeltogether.db').as_posix()}"
 DATABASE_URL = os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL).strip()
@@ -46,7 +48,7 @@ COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").strip().lower() in {"1", "tr
 
 engine_options: dict[str, Any] = {"pool_pre_ping": True}
 if DATABASE_URL.startswith("sqlite"):
-    engine_options["connect_args"] = {"check_same_thread": False}
+    engine_options["connect_args"] = {"check_same_thread": False, "timeout": 30}
 engine = create_engine(DATABASE_URL, **engine_options)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, expire_on_commit=False)
 
